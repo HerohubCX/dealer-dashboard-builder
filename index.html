@@ -251,11 +251,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text1);font
 <!-- Stats -->
 <div class="stats-row">
   <div class="stat-card">
-    <div class="stat-value">2</div>
+    <div class="stat-value">3</div>
     <div class="stat-label">Dealers configured</div>
   </div>
   <div class="stat-card">
-    <div class="stat-value teal">5</div>
+    <div class="stat-value teal">8</div>
     <div class="stat-label">Dashboards generated</div>
   </div>
   <div class="stat-card">
@@ -292,7 +292,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text1);font
       <tr id="row-2">
         <td style="font-weight:600;color:var(--text1)">Ocean County Motorsports</td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)">ChIJB5PO4eGdwYkRDw8JAh4jiy4</td>
-        <td>2026-04-03</td>
+        <td>2026-04-06</td>
         <td id="range-label-2" style="font-size:11px;color:var(--text3)">
           —
         </td>
@@ -321,10 +321,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text1);font
         </td>
       </tr>
       
+      <tr id="row-4">
+        <td style="font-weight:600;color:var(--text1)">Performance Powersports</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)">ChIJU8O1bQwQIYYRNoEOmxAR0s4</td>
+        <td>2026-04-06</td>
+        <td id="range-label-4" style="font-size:11px;color:var(--text3)">
+          —
+        </td>
+        <td id="status-4">
+          
+            <span class="badge badge-success">✓ Done</span>
+          
+        </td>
+        <td id="link-4">
+          
+            <a href="/output/dashboards/performance-powersports-reputation-dashboard.html" target="_blank" class="btn btn-secondary btn-sm">View</a>
+          
+        </td>
+        <td style="display:flex;gap:6px;align-items:center">
+          <button class="btn btn-primary btn-sm" id="runBtn-4"
+                  onclick="openRunModal(4, 'Performance Powersports')">
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" fill="currentColor"/></svg>
+            Run
+          </button>
+          <form method="POST" action="/dealers/4/delete"
+                onsubmit="return confirm('Remove Performance Powersports?')">
+            <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Remove">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2h4v2M5 4v9a1 1 0 001 1h4a1 1 0 001-1V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </form>
+        </td>
+      </tr>
+      
       <tr id="row-3">
         <td style="font-weight:600;color:var(--text1)">Ultimate Cycle</td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3)">ChIJR0mNLjVlsYkRyBu5bBLBZmw</td>
-        <td>2026-04-03</td>
+        <td>2026-04-06</td>
         <td id="range-label-3" style="font-size:11px;color:var(--text3)">
           —
         </td>
@@ -443,6 +475,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text1);font
       </div>
     </div>
 
+    <!-- Header / Footer option -->
+    <div class="divider-label" style="margin-top:1rem">Dashboard Style</div>
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border2);border-radius:8px;cursor:pointer;transition:border-color .15s;background:var(--surface)" id="chromeToggleWrap">
+      <input type="checkbox" id="hideChrome" onchange="document.getElementById('chromeToggleWrap').style.borderColor=this.checked?'var(--teal)':'var(--border2)'" style="accent-color:var(--teal);width:15px;height:15px;flex-shrink:0">
+      <span>
+        <span style="display:block;font-size:12px;font-weight:700;color:var(--text1)">Hide header &amp; footer</span>
+        <span style="display:block;font-size:10px;color:var(--text3);margin-top:1px">Dashboard only — no HeroHub nav bar or confidential footer</span>
+      </span>
+    </label>
+
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" onclick="document.getElementById('runModal').classList.remove('open')">Cancel</button>
       <button type="button" class="btn btn-primary" id="startRunBtn" onclick="confirmRun()">
@@ -543,9 +585,12 @@ function openRunModal(dealerId, dealerName) {
   pendingDealerId   = dealerId;
   pendingDealerName = dealerName;
   document.getElementById('runModalDealerName').textContent = dealerName;
-  // Reset to All Years
+  // Reset options
   document.getElementById('dr_all').checked = true;
   document.getElementById('customDates').classList.remove('visible');
+  const hc = document.getElementById('hideChrome');
+  hc.checked = false;
+  document.getElementById('chromeToggleWrap').style.borderColor = 'var(--border2)';
   document.getElementById('runModal').classList.add('open');
 }
 
@@ -562,7 +607,10 @@ async function confirmRun() {
 
   document.getElementById('runModal').classList.remove('open');
 
-  const payload = { date_range: rangeVal };
+  const payload = {
+    date_range:  rangeVal,
+    hide_chrome: document.getElementById('hideChrome').checked,
+  };
   if (rangeVal === 'custom') {
     payload.from_date = fromDate;
     payload.to_date   = toDate;
